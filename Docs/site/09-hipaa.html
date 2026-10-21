@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What does HIPAA ask, and what does Bless answer? · Bless</title>
+<meta name="description" content="Bless is built with HIPAA's Security Rule in mind: the ledger supports audit controls and integrity, the seal person authentication, the context window minimum necessary. What the deployer must still provide, and what Bless does not do.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 9 of 9</span><a href="code.html#Docs/HIPAA.md">HIPAA.md in the explorer</a></header>
+
+<h1 id="ch-hipaa">What does HIPAA ask, and what does Bless answer?</h1>
+<p class="lede"><em>On which safeguards the design supports, and which stay the deployer's.</em></p>
+
+<p>No library is HIPAA compliant on its own. Compliance belongs to a deployment: its people, its agreements, its servers. Bless is built so that the parts it owns support the Security Rule, and it says plainly which parts it does not own.</p>
+
+<h2 id="safeguards">The technical safeguards</h2>
+<div class="scroll">
+<table class="data">
+<thead><tr><th>Safeguard</th><th>What Bless provides</th><th>What the deployer must do</th></tr></thead>
+<tbody>
+<tr><td>Access control, §164.312(a)(1)</td><td>Private files and directories; a verdict from anyone who is not a reviewer of the petition is refused.</td><td>Authenticate users and reviewers, and decide who may read the store.</td></tr>
+<tr><td>Encryption at rest, §164.312(a)(2)(iv)</td><td>Petitions sealed with AES-256-GCM when the store is given a key.</td><td>Hold and rotate the key, and encrypt backups.</td></tr>
+<tr><td>Audit controls, §164.312(b)</td><td>A hash-chained ledger of every submission, view, verdict, lapse, withdrawal, release and delivery, with who and when.</td><td>Retain it, review it, and keep a copy of its last hash where the application cannot rewrite it.</td></tr>
+<tr><td>Integrity, §164.312(c)(1)</td><td>Every text pinned by SHA-256; a release verified against its petition, its seals and its quorum.</td><td>Protect the stores from deletion, and back them up.</td></tr>
+<tr><td>Person authentication, §164.312(d)</td><td>Every verdict signed with the reviewer's Ed25519 key and checked against their registered public key.</td><td>Issue keys to verified reviewers, keep them on their devices, and stop naming a key when its reviewer leaves.</td></tr>
+<tr><td>Transmission security, §164.312(e)(1)</td><td>HTTPS to hosted models.</td><td>Encrypt every hop, and hold a business associate agreement with every service that receives the data.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="minimum">Minimum necessary</h2>
+<p>A petition keeps only the latest messages its policy's context window allows, and never the system prompt. The ledger holds digests and codes, never words, so its auditors read no patient's text. The library writes no logs at all: the layering test forbids printing and unified logging in its sources.</p>
+
+<h2 id="not">What Bless does not do</h2>
+<p>It is not a business associate agreement. Sending a patient's words to a hosted model requires that provider's agreement, or a model the clinic runs itself. It does not decide who is a reviewer, store keys, or make a clinical judgment: a blessing is a person's decision, and Bless records it.</p>
+
+<details class="engineers" id="engineers"><summary>For engineers: the checklist before go-live</summary><div class="inner">
+<ul class="plain">
+<li>The deployer's column above, answered.</li>
+<li>Every path that sends model text to a user goes through <code>Blessed</code> or delivers only a release.</li>
+<li>The checklist at the end of <a href="code.html#Docs/INTEGRATION.md">the integration guide</a>, worked through.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

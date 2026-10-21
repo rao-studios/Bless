@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is a petition? · Bless</title>
+<meta name="description" content="A petition is a reply held for review: the proposed text, the conversation the policy lets a reviewer see, who it is for, who may rule on it, and every verdict so far. Its standings, and what is derived rather than stored.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 2 of 9</span><a href="code.html#trail-reply-held-3">Walk it in the explorer</a></header>
+
+<h1 id="ch-petition">What is a petition?</h1>
+<p class="lede"><em>On what Bless keeps while a reply waits, and what it works out from it.</em></p>
+
+<p>A petition is a reply held for review. It keeps the model's proposed text, the conversation the reviewer may see, the recipient, the reviewers, the policy, and every verdict given so far. It never changes the proposed text: an amendment is a verdict, kept beside it.</p>
+<div class="code" data-excerpt="Sources/Bless/Gate/Gate.swift:Gate.submit(_:to:reviewers:policy:)"></div>
+
+<h2 id="derived">Derived, not stored</h2>
+<p>What the recipient would get is worked out each time it is read: the latest amendment, or the proposed text. So is its SHA-256, and so is the list of blessings that count. A field that is derived cannot drift from the facts it comes from.</p>
+<div class="code" data-excerpt="Sources/Bless/Petition/Petition.swift:Petition.message"></div>
+
+<h2 id="standings">Five standings, one of them open</h2>
+<p>A petition stands in one of five places: <span data-enum="standings"><code>pending</code>, <code>blessed</code>, <code>withheld</code>, <code>expired</code>, <code>withdrawn</code></span>. Only the first is open. Every other standing is final, and a final petition accepts no verdict.</p>
+
+<figure class="fig" id="fig-petition-states" data-fig="petition-states" data-event="amend">
+<figcaption>Pick what happens to a pending petition. The figure lights where it ends, the release it allows, and what the ledger writes. Its standings are checked against the Swift enum.</figcaption>
+</figure>
+
+<p>Two standings allow a release. A blessed petition releases the blessed or amended text. An expired one releases a fixed holding message, and only when its policy names one.</p>
+
+<h2 id="context">Only the context the policy allows</h2>
+<p>The Gate keeps only as much of the conversation as the policy's context window allows, and never the system prompt. The reviewer sees what they need to judge the reply. The store keeps no more than that.</p>
+<div class="code" data-excerpt="Sources/Bless/Petition/Policy.swift:Policy.trimmed(_:)"></div>
+
+<details class="engineers" id="engineers"><summary>For engineers: where each piece lives</summary><div class="inner">
+<ul class="plain">
+<li><code>Petition</code> is a value: its rules, <code>applying(_:at:)</code> and <code>lapsed(at:)</code>, return a new petition and are tested in <code>PetitionTests</code> with no Gate.</li>
+<li>Petitions are kept in memory, or as one private file each by <code>FilePetitionStore</code>, sealed with AES-GCM when given a key.</li>
+<li>A petition's JSON is in the <a href="code.html#Docs/INTEGRATION.md">integration guide</a>, with a release's and a ledger event's.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/figures/petition.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

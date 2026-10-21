@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The lexicon · Bless</title>
+<meta name="description" content="The words Bless's code and chapters use, each as the code spells it: petition, verdict, ruling, release, gate, ledger, seal, policy, lapse, quorum, digest, canonical bytes.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · appendix</span><a href="code.html">The code explorer</a></header>
+
+<h1 id="ch-lexicon">The lexicon</h1>
+<p class="lede"><em>On the words Bless uses, each as the code spells it.</em></p>
+
+<dl class="lex">
+<dt id="w-blessed"><code>Blessed</code></dt><dd>The pattern as one type: a model wrapped so that every reply it writes is held at the Gate, and only the release comes back.</dd>
+<dt id="w-canonical">canonical bytes</dt><dd>The fixed layout a seal signs and a ledger hash covers, named by a domain tag such as bless/verdict/1. Not JSON.</dd>
+<dt id="w-digest">digest</dt><dd>The SHA-256 of a text's UTF-8 bytes, exactly as given. The ledger names texts only by their digests. In the code, <code>Sha256</code>.</dd>
+<dt id="w-draft"><code>Draft</code></dt><dd>What a host hands the Gate: the proposed reply, the conversation it answers, and its provenance.</dd>
+<dt id="w-gate"><code>Gate</code></dt><dd>Where replies wait: the actor that holds petitions, applies verdicts, lapses deadlines and hands out releases.</dd>
+<dt id="w-lapse">lapse</dt><dd>What a policy does at a deadline: <code>hold</code>, <code>withhold</code> or <code>releaseFallback</code>. A lapse never sends the model's draft.</dd>
+<dt id="w-ledger"><code>Ledger</code></dt><dd>The append-only audit log, one event per transition, each hash covering the one before it. It holds ids, digests and codes, never words.</dd>
+<dt id="w-petition"><code>Petition</code></dt><dd>A reply held for review, with its context, recipient, reviewers, policy and verdicts.</dd>
+<dt id="w-policy"><code>Policy</code></dt><dd>The rules one petition is held under: quorum, deadline, lapse, whether amendments are allowed, the context window, and whether seals are required.</dd>
+<dt id="w-provider"><code>InferenceProvider</code></dt><dd>Anything that answers a chat request, whole or as a stream. Bless's only demand of a model.</dd>
+<dt id="w-quorum">quorum</dt><dd>How many reviewers must bless the current text. An amendment starts the count again.</dd>
+<dt id="w-release"><code>Release</code></dt><dd>The only thing a host may deliver: the final text, its digest, and the sealed verdicts that allowed it.</dd>
+<dt id="w-ruling"><code>Ruling</code></dt><dd>A reviewer's decision: <code>bless</code>, <code>amend</code> or <code>withhold</code>.</dd>
+<dt id="w-seal"><code>Seal</code></dt><dd>A reviewer's Ed25519 signature over a verdict's canonical bytes.</dd>
+<dt id="w-standing">standing</dt><dd>Where a petition is: pending, or one of four final standings.</dd>
+<dt id="w-verdict"><code>Verdict</code></dt><dd>One reviewer's ruling on one petition, pinned to the digest of the words they read.</dd>
+</dl>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What does the ledger prove? · Bless</title>
+<meta name="description" content="The ledger is Bless's audit log: one event per transition, each hash covering its fields and the hash before it, so a changed, dropped or reordered event is found. It holds ids, digests and codes, never words.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 4 of 9</span><a href="code.html#trail-ledger-chains-1">Walk it in the explorer</a></header>
+
+<h1 id="ch-ledger">What does the ledger prove?</h1>
+<p class="lede"><em>On a log that notices when it has been changed, and holds nothing a patient said.</em></p>
+
+<p>Every transition at the Gate writes one event to the ledger: a draft held, a petition viewed, a verdict given, a release handed out. Each event's hash covers its own fields and the hash of the event before it. Change any byte of any event and every hash from there on stops matching.</p>
+<div class="code" data-excerpt="Sources/Bless/Ledger/Ledger.swift:Ledger.append(_:petition:actor:digest:code:at:)"></div>
+
+<figure class="fig" id="fig-ledger-chain" data-fig="ledger-chain" data-event="3" data-field="code">
+<figcaption>The fixture's five events, each hash recomputed in this browser from bless/event/1. Change event 3's code from amend to withhold, the way a forger would turn an amendment into a refusal, and see where the check stops.</figcaption>
+</figure>
+
+<h2 id="verify">What verify finds</h2>
+<p><code>Ledger.verify</code> walks the chain from the first event and names the first one that does not fit. A changed byte breaks that event's own hash. Re-hashing the changed event moves the break to the next one, whose previous no longer matches.</p>
+<div class="code" data-excerpt="Sources/Bless/Ledger/Ledger.swift:Ledger.verify(_:)"></div>
+<p>A dropped line or two swapped lines break the numbering. To hide a change, a forger must rewrite every later event; a copy of the last hash kept somewhere else gives that away.</p>
+
+<h2 id="kinds">What it records</h2>
+<p>The ledger knows ten kinds of event: <span data-enum="ledgerKinds"><code>submitted</code>, <code>viewed</code>, <code>decided</code>, <code>blessed</code>, <code>withheld</code>, <code>expired</code>, <code>withdrawn</code>, <code>released</code>, <code>dispatched</code>, <code>failed</code></span>. Each names its petition, its actor when a person acted, the digest of the text it concerns, and a code.</p>
+<p>A code is a word from Bless's own vocabulary, such as the ruling's kind, the release's basis or an error's name. It is never free text.</p>
+
+<h2 id="no-words">No words, only digests</h2>
+<p>The ledger holds no message and no reason. A text appears only as its SHA-256, which proves which words were held and which were sent without saying them. A withholding reason such as a test result would otherwise sit in a log every auditor reads.</p>
+<p>The rule is checked, not trusted. The layering test fails if the ledger's folder reads a message's content. A ledger test withholds a reply with a diagnosis in its reason, then searches the log for it.</p>
+
+<details class="engineers" id="engineers"><summary>For engineers: where each piece lives</summary><div class="inner">
+<ul class="plain">
+<li><a href="code.html#trail-ledger-chains-1">The ledger-chains trail</a> goes from an append through the canonical bytes to the file and the walk back.</li>
+<li><code>FileLedgerStore</code> writes JSON lines, appended and flushed before each call returns, mode 0600. A ledger reopened over its file continues the chain.</li>
+<li>The canonical layout is in <a href="code.html#Sources/Bless/Support/Canonical.swift">Canonical.swift</a>; <code>CanonicalTests</code> holds it to vectors a separate Python implementation computed.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/figures/chain.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

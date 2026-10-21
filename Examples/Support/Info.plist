@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<plist version="1.0">
+<dict>
+	<!-- Linked into __TEXT,__info_plist (Package.swift), so the bare build product is a real
+	     app with this identity: a bundle id, a menu-bar name, a Dock tile. No .app wrapper. -->
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleIdentifier</key>
+	<string>nyc.rao.bless.playground</string>
+	<key>CFBundleExecutable</key>
+	<string>BlessPlayground</string>
+	<key>CFBundleName</key>
+	<string>Bless Playground</string>
+	<key>CFBundleDisplayName</key>
+	<string>Bless Playground</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>26.0</string>
+	<!-- An OpenAI-compatible layer on this Mac (Sewn, Ollama, LM Studio) answers over plain
+	     http on loopback; App Transport Security would refuse it otherwise. Nothing else is relaxed. -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+</dict>
+</plist>

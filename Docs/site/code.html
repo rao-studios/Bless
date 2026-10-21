@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The code explorer · Bless</title>
+<meta name="description" content="Every file of the Bless repository, verbatim, with each Swift declaration, its calls, and seven trails that walk each flow in the order the code runs, the first the whole flow, which routes into the rest.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/explorer.css">
+</head>
+<body class="explorer" data-groups="all">
+<a class="skip" href="#explorer">Skip to the code</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · appendix</span><a href="index.html">Bless at a glance</a></header>
+
+<h1 id="ch-code">The code explorer</h1>
+<p class="lede"><em>On reading every file of the repository, and walking it in the order it runs.</em></p>
+<p>Every file is here, whole, with the editor's line numbers: pick one, or walk a trail, one flow told declaration by declaration in the order it runs. Start with the whole flow, F, which follows one reply from the host's call to its release. Beside next on this trail, each of its steps routes into the trails that tell that stage in depth, and each of their steps routes back. Paste a name, a signature line or a whole body into the box to open that declaration with what it calls and what calls it. Calls are matched by name and argument labels, not by a compiler, and each says how sure it is; Copy line gives File.swift:21 for the editor's Open Quickly.</p>
+
+<div id="explorer" class="xp" data-app="explorer"></div>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/run.js"></script>
+<script src="data/index.js"></script>
+<script src="js/explorer.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount(function () { Bless.explorer.mount(document.getElementById("explorer")); });</script>
+</body>
+</html>

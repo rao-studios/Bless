@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The self-check · Bless</title>
+<meta name="description" content="Every consistency check the site can make in a browser, run when the page opens: the data against itself, the declarations, the ids, the calls, the trails, find, the deep links, the canonical bytes, the five figures and the ask orb.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body data-groups="all">
+<a class="skip" href="#main">Skip to the results</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · appendix</span><a href="code.html">The code explorer</a></header>
+<h1 id="ch-selfcheck">The self-check</h1>
+<p class="lede"><em>On every check the site can make in the browser, run when this page opened.</em></p>
+<p>The checks below hold the data to itself and to the code it embeds. Every declaration's lines lie inside its file, every signature line holds its keyword, and the ids this page derives equal the build's. Every call edge joins two declarations with a tier, and every trail entry resolves and still holds its anchor.</p>
+<p>The canonical bytes are written again here and held to the bytes Swift wrote for the fixtures. Each figure is mounted below, so its own checks run too.</p>
+<p>A page opened from disk cannot read the repository, so the comparison with the working tree runs in Docs/site/src/check.py, which fails when a file changed after the build. That script opens this page in Chrome and fails if any check below fails.</p>
+<div id="summary"></div>
+<details class="engineers" id="figures"><summary>The five figures, mounted here so their checks run</summary><div class="inner">
+<figure class="fig" id="fig-gate" data-fig="gate"><figcaption>The gate.</figcaption></figure>
+<figure class="fig" id="fig-petition-states" data-fig="petition-states"><figcaption>A petition's life.</figcaption></figure>
+<figure class="fig" id="fig-ledger-chain" data-fig="ledger-chain"><figcaption>The ledger's chain.</figcaption></figure>
+<figure class="fig" id="fig-seal" data-fig="seal"><figcaption>The seal.</figcaption></figure>
+<figure class="fig" id="fig-deadline" data-fig="deadline"><figcaption>The deadline.</figcaption></figure>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/run.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/figures/gate.js"></script>
+<script src="js/figures/petition.js"></script>
+<script src="js/figures/chain.js"></script>
+<script src="js/figures/seal.js"></script>
+<script src="js/figures/deadline.js"></script>
+<script src="js/explorer.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>
+Bless.mount(null, function () {
+  var B = window.Bless, h = B.h, results = B.selfCheck(), failed = results.filter(function (r) { return !r.ok; });
+  var summary = document.getElementById("summary"), idx = B.data().index || {};
+  summary.appendChild(h("p", { class: "close" }, [failed.length ? failed.length + " of " + results.length + " checks failed" : "All " + results.length + " checks passed",
+    idx.head ? " · data built from " + idx.base.short + " to " + (idx.head.short || "this tree") + (idx.head.dirty ? " and the working tree" : "") : ""]));
+  summary.appendChild(h("div", { class: "scroll" }, h("table", { class: "data" }, [
+    h("thead", null, h("tr", null, [h("th", null, "Part"), h("th", null, "Check"), h("th", null, "Result")])),
+    h("tbody", null, results.map(function (r) {
+      return h("tr", null, [h("td", { class: "mono nowrap" }, r.part || ""), h("td", null, r.name), h("td", null, [h("span", { class: "status " + (r.ok ? "ok" : "bad") }, r.ok ? "✓ passed" : "✗ failed"), r.detail ? " · " + r.detail : ""])]);
+    }))])));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What can a reviewer do? · Bless</title>
+<meta name="description" content="A reviewer blesses, amends or withholds a held reply, and every ruling is sealed. The rules that decide a petition: withhold wins, blessings bind to the text, no stale verdicts, one blessing per text, late is refused.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 3 of 9</span><a href="code.html#trail-reviewer-rules-1">Walk it in the explorer</a></header>
+
+<h1 id="ch-reviewer">What can a reviewer do?</h1>
+<p class="lede"><em>On the three rulings, and the rules that make them mean the same thing every time.</em></p>
+
+<p>A reviewer has three rulings: <span data-enum="rulings"><code>bless</code>, <code>amend</code>, <code>withhold</code></span>. To bless is to send the text as written. To amend is to send the reviewer's own text in its place. To withhold is to send nothing from the model at all.</p>
+<div class="code" data-excerpt="Sources/Bless/Petition/Ruling.swift:Ruling"></div>
+<p>A withholding carries a reason. The reason is for the clinic's records: it stays in the petition, never reaches the patient, and never enters the ledger.</p>
+
+<h2 id="rules">The rules, by name</h2>
+<p>Every verdict goes through one pure function, <code>Petition.applying(_:at:)</code>, and its rules have names so that a test, a chapter and a reviewer can point at the same one.</p>
+<ul>
+<li><strong>Withhold wins.</strong> Any withholding before the petition is blessed ends it. One reviewer's doubt outweighs another's blessing.</li>
+<li><strong>Blessings bind to the text.</strong> A verdict names the digest of the words it read. Only verdicts on the current words count toward the quorum.</li>
+<li><strong>No stale verdicts.</strong> A verdict on words that are no longer current is refused, so two reviewers acting at once cannot bless different texts.</li>
+<li><strong>One blessing per reviewer per text.</strong> A second blessing of the same words is refused. A withholding is always heard.</li>
+<li><strong>Late is refused.</strong> A decided, lapsed or withdrawn petition accepts nothing more.</li>
+</ul>
+<div class="code" data-excerpt="Sources/Bless/Petition/Petition.swift:Petition.applying(_:at:)"></div>
+
+<h2 id="amend">An amendment starts the count again</h2>
+<p>An amendment makes new words, with a new digest. The amender endorses them, and every earlier blessing was of the old words. With two reviewers required, the second must bless the amended text, not the model's.</p>
+<p>The release carries every verdict that endorses the text it sends. <code>Release.verify(against:)</code> checks them from scratch: the digest, each seal, and the quorum.</p>
+<div class="code" data-excerpt="Sources/Bless/Petition/Release.swift:Release.verify(against:)"></div>
+
+<details class="engineers" id="engineers"><summary>For engineers: where each piece lives</summary><div class="inner">
+<ul class="plain">
+<li><a href="code.html#trail-reviewer-rules-1">The reviewer-rules trail</a> follows a ruling from the reviewer's identity through the seal and the rules to the release.</li>
+<li><code>PetitionTests</code> holds each rule; <code>GateTests</code> holds quorum 2 through the Gate.</li>
+<li>Reviewers sign on their own device. The Gate takes a sealed <code>Verdict</code> and verifies it; it never sees a private key.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/figures/petition.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

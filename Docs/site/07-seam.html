@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How does it drop into an inference layer? · Bless</title>
+<meta name="description" content="Bless adopts any model that answers chat requests: Blessed wraps an InferenceProvider, BlessProviders speaks the chat-completions wire for Mistral, OpenAI and AII's Sewn, and the records are plain JSON any language can check.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 7 of 9</span><a href="code.html#trail-blessed-drops-in-1">Walk it in the explorer</a></header>
+
+<h1 id="ch-seam">How does it drop into an inference layer?</h1>
+<p class="lede"><em>On one protocol, one wrapper, and the wire every chat API already shares.</em></p>
+
+<p>Bless asks one thing of a model: answer a chat request, whole or as a stream. That is <code>InferenceProvider</code>, and any client conforms in a few lines. <code>Blessed</code> is an <code>InferenceProvider</code> too, so anything that took the model takes the wrapper.</p>
+<div class="code" data-excerpt="Sources/Bless/Chat/InferenceProvider.swift:InferenceProvider"></div>
+
+<h2 id="wire">The wire most layers speak</h2>
+<p>Mistral, OpenAI, vLLM, Ollama, LM Studio and AII's Sewn answer the same chat-completions request. They return the same choices and stream the same server-sent events. Bless's <code>OpenAICompatibleProvider</code> speaks that wire, with presets for the layers it knows by name.</p>
+<div class="code" data-excerpt="Sources/BlessProviders/Preset.swift:Preset.sewn(baseURL:sewn:)"></div>
+<p>The stream is read byte by byte. Foundation's async lines drop the blank line that ends each event, so the parser takes bytes instead.</p>
+<div class="code" data-excerpt="Sources/BlessProviders/SSE.swift:SSEParser.feed(_:)"></div>
+
+<h2 id="sewn">Sewn, later</h2>
+<p>AII's Sewn has no hook between its model and its client yet, so Bless sits in front of it today. The Sewn preset sends the object its chat route requires, and <code>Blessed</code> holds every reply before the host's client sees it. A hook inside Sewn will do better: Sewn writes a conversation into the person's memory before it returns, and the hook must move those writes after the release.</p>
+<p>For a whole reply, the hook holds the text before Sewn builds its response. For a stream, it holds every token until the release, then sends the blessed text as one piece.</p>
+
+<h2 id="any-language">Any language</h2>
+<p>A system that is not Swift can still speak Bless. Petitions, verdicts, releases and ledger events are plain JSON, and the bytes a seal signs and a hash covers are written down field by field in <a href="code.html#Docs/INTEGRATION.md">the integration guide</a>. Its JavaScript signs a ruling with Web Crypto, and its Python walks a ledger's chain and verifies a seal.</p>
+<div class="code" data-excerpt="Examples/Sources/BlessPlaygroundKit/Witnessed.swift:Witnessed.complete(_:)"></div>
+<p>The playground's <code>Witnessed</code> shows the same idea from the other side: a provider that wraps a provider, so the operator can watch the draft being written while <code>Blessed</code> still holds it.</p>
+
+<details class="engineers" id="engineers"><summary>For engineers: where each piece lives</summary><div class="inner">
+<ul class="plain">
+<li><a href="code.html#trail-blessed-drops-in-1">The blessed-drops-in trail</a> runs from the provider's stream through <code>Blessed.stream</code> to the playground's session.</li>
+<li><code>OpenAICompatibleProviderTests</code> drives the client against a stub server; a live run on 2026-10-20 held a streamed Mistral reply whole and released only the amendment.</li>
+<li>The guide's <a href="code.html#Docs/INTEGRATION.md">second part</a> is the reviewer's side: a dashboard that pulls the pending queue and posts a sealed ruling.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

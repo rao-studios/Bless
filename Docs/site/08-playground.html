@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What does the playground show? · Bless</title>
+<meta name="description" content="The playground is a macOS app with a patient, a model and a reviewer in one window at one Gate, against Mistral or an offline fake: the pattern working, and its ledger verified.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 8 of 9</span><a href="code.html#Examples/Sources/BlessPlaygroundKit/Session.swift">The session in the explorer</a></header>
+
+<h1 id="ch-playground">What does the playground show?</h1>
+<p class="lede"><em>On watching a held reply from all three sides at once.</em></p>
+
+<p>The playground is a macOS app, a Swift package of its own beside Bless. One window holds the patient, the model and the reviewer side by side, over the ledger. It runs against Mistral with the owner's key, any model that speaks the same wire, or an offline fake that needs no key.</p>
+<p>The patient's side shows only releases and neutral notices. The model's side shows the draft as it is written. The reviewer's side shows the queue, the conversation the policy allows, and the draft in an editor.</p>
+
+<h2 id="pattern">The pattern, in the session</h2>
+<p>The patient's Send is the pattern itself. The model is wrapped in <code>Witnessed</code>, so the model's pane can follow the draft. That is wrapped in <code>Blessed</code>, so the patient waits for a release exactly as a host's user would.</p>
+<div class="code" data-excerpt="Examples/Sources/BlessPlaygroundKit/Session.swift:Session.send()"></div>
+
+<h2 id="demo">A demo in five steps</h2>
+<ol>
+<li>Choose a scenario, such as ibuprofen with lisinopril, and press Send.</li>
+<li>Watch the model's pane write the draft while the patient sees only that it is held.</li>
+<li>Read it as the reviewer, edit it, and press Amend and Release.</li>
+<li>The patient sees the edited text, marked as reviewed and edited by the doctor.</li>
+<li>Verify the ledger: every event is there, with digests and no words.</li>
+</ol>
+<p>Each fake reply holds one confident sentence a clinician would change, so the amend has something to do. The scenarios are invented; the app's guide warns against typing real patient data while a hosted model is selected.</p>
+
+<h2 id="tested">Tested without a window</h2>
+<p>The session lives in a library with no interface, so its tests drive the whole flow on the fake model. They cover a reply held, amended, withheld, withdrawn and lapsed, and a second question that carries the first answer forward. The app's snapshot mode draws the real window off screen for pictures.</p>
+
+<details class="engineers" id="engineers"><summary>For engineers: where each piece lives</summary><div class="inner">
+<ul class="plain">
+<li>Run it with <code>Examples/run.sh</code>, or open its <code>Package.swift</code> in Xcode and Run. The run sheet is <a href="code.html#Examples/README.md">Examples/README.md</a>.</li>
+<li>The key comes from the app's own Keychain item, the environment, or this Mac's key store, read through <code>/usr/bin/security</code>; it never prints.</li>
+<li>The reviewer's demo key is kept 0600 in Application Support. A real reviewer's key stays on their own device.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

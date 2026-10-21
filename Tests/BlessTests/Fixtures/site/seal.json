@@ -1,0 +1,23 @@
+{
+  "about" : "One sealed amendment by a test key (32 bytes of 0x01), never a real reviewer's.",
+  "canonical" : "0000000f626c6573732f766572646963742f3100000006702d376633610000000964722d6f6b61666f7200000005616d656e6400000097506c656173652061766f69642069627570726f66656e2077697468206c6973696e6f7072696c3a20746f67657468657220746865792063616e2073747261696e20796f7572206b69646e6579732e2054616b652070617261636574616d6f6c20696e73746561642c20616e642063616c6c20757320696620746865206b6e6565207374696c6c20687572747320696e2061207765656b2e3b573785a1ad8e4ea122cd4f6196aa8a65ad9af827f37bb85c8ee0da345d0f87010000001b4e53414944207769746820616e2041434520696e68696269746f720000019a01812ff8",
+  "publicKey" : "8a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c",
+  "reviewer" : {
+    "displayName" : "Dr. Okafor",
+    "id" : "dr-okafor",
+    "verifyingKey" : "iojj3XQJ8ZX9UtstPLpdcspnCb8dlBIb83SIAbQPb1w="
+  },
+  "signature" : "bee20dba956ed4716b6a0a63d6319ca9fc24fcbed6d4e0ad61f881854bb486a8b61157d213fb243938a862cde8d8993db2c5c74ef7d1aab67e563dd9100a9703",
+  "verdict" : {
+    "digest" : "3b573785a1ad8e4ea122cd4f6196aa8a65ad9af827f37bb85c8ee0da345d0f87",
+    "issued" : 1760961835000,
+    "note" : "NSAID with an ACE inhibitor",
+    "petitionID" : "p-7f3a",
+    "reviewer" : "dr-okafor",
+    "ruling" : {
+      "content" : "Please avoid ibuprofen with lisinopril: together they can strain your kidneys. Take paracetamol instead, and call us if the knee still hurts in a week.",
+      "kind" : "amend"
+    },
+    "signature" : "vuINupVu1HFragpj1jGcqfwk/L7W1OCtYfiBhUu0hqi2EVfSE/skOTioYs3o2Jk9ssXHTvfRqrZ+Vj3ZEAqXAw=="
+  }
+}

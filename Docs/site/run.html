@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What this run built · Bless</title>
+<meta name="description" content="What this run built: Bless, its macOS playground and this site, from the owner's request, with the commands and tests the run recorded, every decision and why, and what was left out.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the overview</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · appendix</span><a href="code.html">The code explorer</a></header>
+
+<h1 id="ch-run">What this run built</h1>
+<p class="lede"><em>On the request, the package it became, and what was checked along the way.</em></p>
+<p>This page is the record of the run that built Bless. It holds the owner's request, the decisions it took and why, the commands it ran with their exit codes, and the tests. Everything here is read from Docs/site/src/run.json and the data the site was built from.</p>
+
+<div id="request"></div>
+
+<h2 id="system-picture">The package, one layer at a time</h2>
+<p>Two library targets sit in layers, and the playground, a package of its own, depends on both. Pick a trail from the grid, a row for each flow and a column for each kind, then a step, to light the layers it runs through.</p>
+<div class="system" id="system">
+<figure>
+<svg viewBox="0 0 360 300" role="img" aria-labelledby="sys-title sys-desc">
+<title id="sys-title">Bless's targets, in layers</title>
+<desc id="sys-desc">Bless is the core. BlessProviders depends on it. The playground depends on both and is a package of its own.</desc>
+<defs><marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0,0 L8,4 L0,8 z"/></marker></defs>
+<path class="edge" d="M180,72 V100"/>
+<path class="edge" d="M180,164 V192"/>
+<path class="edge" d="M60,72 V192"/>
+<g class="layer" data-layer="Bless"><a href="code.html"><title>Bless</title><rect x="20" y="10" width="320" height="62" rx="8"/><text class="name" x="34" y="32">Bless</text><text class="count" x="326" y="32" text-anchor="end"></text><text class="what" x="34" y="50">the gate, petitions, verdicts, seals, the ledger,</text><text class="what" x="34" y="64">stores, and Blessed</text></a></g>
+<g class="layer" data-layer="BlessProviders"><a href="code.html"><title>BlessProviders</title><rect x="100" y="102" width="240" height="62" rx="8"/><text class="name" x="114" y="124">BlessProviders</text><text class="count" x="326" y="124" text-anchor="end"></text><text class="what" x="114" y="142">the chat-completions client:</text><text class="what" x="114" y="156">Mistral, OpenAI, Sewn, SSE</text></a></g>
+<g class="layer" data-layer="Examples"><a href="code.html#Examples/Package.swift"><title>Examples</title><rect x="20" y="194" width="320" height="62" rx="8"/><text class="name" x="34" y="216">Examples</text><text class="what" x="34" y="234">the macOS app: patient, model, reviewer</text><text class="what" x="34" y="248">and the ledger, at one Gate</text></a></g>
+</svg>
+<figcaption>The layer table PackageLayeringTests holds, from Package.swift and Examples/Package.swift. A lit box is a layer the selected step runs through.</figcaption>
+</figure>
+<div class="stepper" id="stepper"></div>
+</div>
+
+<h2 id="what-changed">What it holds</h2>
+<p>Every count below is read from the data the page was built from, and each card names where its number comes from.</p>
+<div class="counts" id="counts"></div>
+
+<h2 id="checked">What was checked</h2>
+<p>These are the commands the run recorded, with their exit codes and dates. A failed command shows as failed, with the lines that explain it and the fix that followed.</p>
+<div id="checks"></div>
+<h3 id="tests-h">Tests</h3>
+<p>Each row is one test run the record holds. The counts above take the latest run of each suite.</p>
+<div id="tests"></div>
+<p class="note">Not checked here: this page reruns no command and no test. The site's own checks are Docs/site/src/build.py and Docs/site/src/check.py, and the self-check page runs the rest in the browser.</p>
+
+<h2 id="decisions-h">Decisions</h2>
+<p>One line per decision, with the file it shaped.</p>
+<div id="decisions"></div>
+
+<h2 id="open">Open questions and assumptions</h2>
+<div id="questions"></div>
+
+<h2 id="also-changed">By folder</h2>
+<p>The explorer starts from an empty repository, so every declaration reads as added. The table counts them by folder, and each folder opens in the explorer.</p>
+<div id="also"></div>
+
+<h2 id="excluded">Left out of the explorer</h2>
+<p>These files are in the repository but not embedded: test fixtures, images, the licence, and anything that would carry a secret. Each is listed by name and size.</p>
+<div id="excluded-list"></div>
+
+<h2 id="commits-h">The run's commits</h2>
+<div id="commits"></div>
+
+<p class="close">I am the rest between two notes that barely grow used to each other … But in the dark interval both are reconciled, trembling. And the song stays beautiful.<cite>Rainer Maria Rilke, The Book of Hours</cite></p>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/run.js"></script>
+<script src="data/index.js"></script>
+<script src="js/overview.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount(function () { Bless.overview.mount(); });</script>
+</body>
+</html>

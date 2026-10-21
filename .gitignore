@@ -1,0 +1,37 @@
+# Local working files and tooling, never committed (the owner's rule): the agent's notes, SwiftPM's
+# build products and Xcode state, and editor settings
+CLAUDE.md
+.build
+.swiftpm
+.claude
+.vscode
+# The design notes and the Python example stay on the owner's Mac (owner, 2026-10-20); the site's chapters and
+# Docs/INTEGRATION.md carry what a reader needs
+ARCHITECTURE.md
+/Docs/examples
+# So do the explorer's runbook and the playground's walkthrough (owner, 2026-10-21); Examples/README.md is the run sheet
+/Docs/EXPLORER.md
+/Docs/EXAMPLES.md
+
+# SwiftPM / Xcode, the rest
+xcuserdata/
+*.xcodeproj
+*.dSYM
+DerivedData/
+Package.resolved.orig
+
+# macOS and Python droppings
+.DS_Store
+__pycache__/
+
+# The playground, a package of its own (Examples/run.sh)
+/Examples/.build/
+/Examples/.swiftpm/
+/Examples/.work/
+
+# The site regenerates these: exports and check screenshots
+/Docs/site/export/
+/Docs/site/.check/
+# The ask orb's key, copied from this Mac's ~/.rao by Docs/site/src/askkey.py: never committed, in either spelling
+/docs/site/local/
+/Docs/site/local/

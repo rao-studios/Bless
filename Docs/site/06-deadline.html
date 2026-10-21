@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What happens at the deadline? · Bless</title>
+<meta name="description" content="A petition's policy can set a deadline. At it, the policy decides: hold keeps waiting, withhold expires the petition and sends nothing, a fallback expires it and sends a fixed holding message. A lapse never sends the model's draft.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 6 of 9</span><a href="code.html#trail-deadline-lapses-1">Walk it in the explorer</a></header>
+
+<h1 id="ch-deadline">What happens at the deadline?</h1>
+<p class="lede"><em>On what a policy decides when no reviewer answers in time.</em></p>
+
+<p>A patient should not wait forever, and a clinic should not send an unread reply because no one answered. A policy's deadline settles it in advance. At the deadline, the policy decides, not a reviewer.</p>
+<p>There are three choices: <span data-enum="lapses"><code>hold</code>, <code>withhold</code>, <code>releaseFallback</code></span>. Hold keeps the petition waiting for a reviewer. Withhold expires it and sends nothing. A fallback expires it and sends a fixed holding message the clinic wrote in advance.</p>
+<div class="code" data-excerpt="Sources/Bless/Petition/Policy.swift:Policy.Lapse"></div>
+
+<figure class="fig" id="fig-deadline" data-fig="deadline" data-deadline="240" data-answer="300" data-lapse="releaseFallback">
+<figcaption>Move the reviewer's answer before and after the deadline, and change what the policy does at it. A late verdict is refused once the petition has lapsed; under hold it is still heard.</figcaption>
+</figure>
+
+<h2 id="default">The default is to hold</h2>
+<p>A policy with no settings holds at its deadline: <code>onLapse</code> is <span data-fact="policy.onLapse">hold</span>. Nothing unreviewed is ever released by default. A clinic that wants a holding message must say so, and must write the message.</p>
+<div class="code" data-excerpt="Sources/Bless/Petition/Petition.swift:Petition.lapsed(at:)"></div>
+
+<h2 id="timer">No timer inside</h2>
+<p>The Gate owns no timer. A host can run <code>sweep</code> on its own schedule. Every call that reads a petition lapses it first when it is due, and a caller waiting with a deadline wakes itself when the deadline passes. Correctness rests on none of the three alone.</p>
+<div class="code" data-excerpt="Sources/Bless/Gate/Gate.swift:Gate.sweep(now:)"></div>
+
+<details class="engineers" id="engineers"><summary>For engineers: where each piece lives</summary><div class="inner">
+<ul class="plain">
+<li><a href="code.html#trail-deadline-lapses-1">The deadline-lapses trail</a> follows a sweep, the lapse rule and the self-waking wait.</li>
+<li>The clock and the sleeper are injected, so <code>GateWaitingTests</code> moves time by hand and never sleeps.</li>
+<li>The playground ticks <code>sweep</code> once a second while a reply is held.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/figures/deadline.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

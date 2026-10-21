@@ -1,0 +1,910 @@
+{
+ "picker": [
+  {
+   "title": "The whole flow",
+   "kinds": [
+    "flow"
+   ],
+   "rows": [
+    {
+     "label": "End to end",
+     "trails": [
+      "full-flow"
+     ]
+    }
+   ]
+  },
+  {
+   "title": "One reply",
+   "kinds": [
+    "hold",
+    "ruling"
+   ],
+   "rows": [
+    {
+     "label": "Reviewed",
+     "trails": [
+      "reply-held",
+      "reviewer-rules"
+     ]
+    }
+   ]
+  },
+  {
+   "title": "No answer",
+   "kinds": [
+    "ruling"
+   ],
+   "rows": [
+    {
+     "label": "The deadline",
+     "trails": [
+      "deadline-lapses"
+     ]
+    }
+   ]
+  },
+  {
+   "title": "The record",
+   "kinds": [
+    "record"
+   ],
+   "rows": [
+    {
+     "label": "The ledger",
+     "trails": [
+      "ledger-chains"
+     ]
+    },
+    {
+     "label": "The seal",
+     "trails": [
+      "seal-signs"
+     ]
+    }
+   ]
+  },
+  {
+   "title": "The seam",
+   "kinds": [
+    "seam"
+   ],
+   "rows": [
+    {
+     "label": "Any model",
+     "trails": [
+      "blessed-drops-in"
+     ]
+    }
+   ]
+  }
+ ],
+ "trails": [
+  {
+   "id": "full-flow",
+   "kind": "flow",
+   "title": "The whole flow",
+   "mark": "F",
+   "subtitle": "a host's call to a release, every trail in order",
+   "say": "One reply from end to end, a step for each stage: the host's call, the draft, the petition, the wait, the sealed ruling, the rules, the ledger and the release. Each step routes into the trails that tell it in depth.",
+   "steps": [
+    {
+     "n": 1,
+     "title": "A host asks Blessed, not the model",
+     "chapters": [
+      "01-hold.html"
+     ],
+     "routes": [
+      "reply-held-1",
+      "blessed-drops-in-3",
+      "blessed-drops-in-5"
+     ],
+     "entries": [
+      {
+       "scope": "Blessed.complete(_:)",
+       "anchor": "try await blessed(request).response",
+       "note": "The one change a host makes: it calls Blessed where it called the model, and gets back only what a reviewer allowed.",
+       "cite": "WHAT"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "The model drafts the reply",
+     "chapters": [
+      "07-seam.html"
+     ],
+     "routes": [
+      "reply-held-2",
+      "blessed-drops-in-1",
+      "blessed-drops-in-2"
+     ],
+     "entries": [
+      {
+       "scope": "Blessed.blessed(_:)",
+       "anchor": "let draft = try await upstream.complete(request)",
+       "note": "Asks the wrapped model for its whole reply; any layer that speaks the chat-completions wire can answer.",
+       "cite": "doc:Blessed.blessed(_:)"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "The draft is held as a petition",
+     "chapters": [
+      "02-petition.html"
+     ],
+     "routes": [
+      "reply-held-3",
+      "reply-held-4"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.submit(_:to:reviewers:policy:)",
+       "anchor": "try ledger.append(.submitted, petition: petition.id, digest: petition.digest, at: at)",
+       "link": "none",
+       "note": "Checks the draft and its policy, keeps only the context the policy allows, stores the petition and writes its first ledger line.",
+       "cite": "test:submit trims the context, stores the petition and writes `submitted` with the draft's digest"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "The caller waits, and a deadline may decide",
+     "chapters": [
+      "01-hold.html",
+      "06-deadline.html"
+     ],
+     "routes": [
+      "reply-held-5",
+      "deadline-lapses-2",
+      "deadline-lapses-4"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.release(for:)",
+       "anchor": "try await park(id, deadline: petition.policy.onLapse == .hold ? nil : petition.deadline)",
+       "link": "none",
+       "note": "Suspends until the petition is decided; a cancelled caller leaves the review alone, and at a deadline the policy decides instead.",
+       "cite": "test:release suspends until a verdict lands"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "A reviewer rules, with a seal",
+     "chapters": [
+      "03-reviewer.html",
+      "05-seal.html"
+     ],
+     "routes": [
+      "reviewer-rules-1",
+      "reviewer-rules-2",
+      "seal-signs-2"
+     ],
+     "entries": [
+      {
+       "scope": "ReviewerIdentity.verdict(_:on:note:issued:)",
+       "anchor": "return try Seal.sign(unsigned, privateKey: privateKey)",
+       "link": "none",
+       "note": "On the reviewer's own device: a verdict pinned to the digest of the words they read, signed with their key.",
+       "cite": "WHAT"
+      },
+      {
+       "scope": "Gate.decide(_:)",
+       "anchor": "let next = try petition.applying(verdict, at: at)",
+       "link": "none",
+       "note": "The Gate checks the seal against the reviewer's public key, then applies the verdict.",
+       "cite": "test:decide refuses an unsealed or forged verdict under a sealing policy"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "The rules decide the petition",
+     "chapters": [
+      "03-reviewer.html"
+     ],
+     "routes": [
+      "reviewer-rules-3",
+      "reviewer-rules-4",
+      "reviewer-rules-5"
+     ],
+     "entries": [
+      {
+       "scope": "Petition.applying(_:at:)",
+       "anchor": "if next.blessings.count >= policy.quorum {",
+       "note": "Withhold wins, blessings bind to the text, and stale or late verdicts are refused; at the quorum the petition is blessed.",
+       "cite": "WHAT"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Each transition is chained into the ledger",
+     "chapters": [
+      "04-ledger.html"
+     ],
+     "routes": [
+      "ledger-chains-1",
+      "ledger-chains-2",
+      "ledger-chains-4"
+     ],
+     "entries": [
+      {
+       "scope": "Ledger.append(_:petition:actor:digest:code:at:)",
+       "anchor": "head = Head(seq: event.seq, hash: event.hash)",
+       "note": "Every transition writes one event, numbered and linked to the hash before it; the ledger holds digests and codes, never words.",
+       "cite": "test:a ledger holds ids, digests and codes; a withholding's reason never reaches it",
+       "link": "none"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "The release, issued once and checked",
+     "chapters": [
+      "03-reviewer.html",
+      "05-seal.html"
+     ],
+     "routes": [
+      "reviewer-rules-6",
+      "seal-signs-4",
+      "seal-signs-5"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.issue(_:)",
+       "anchor": "guard let release = Release(petition: next, at: at) else { throw BlessError.notBlessed(petition.id) }",
+       "note": "The first caller to ask stamps the release and writes released; every waiter gets the same one.",
+       "cite": "test:two waiters get the same release, and it is logged once"
+      },
+      {
+       "scope": "Release.verify(against:)",
+       "anchor": "guard petition.standing == .blessed, digest == petition.digest else {",
+       "link": "none",
+       "note": "A release proves itself: its digest, every seal and the quorum are checked again from scratch.",
+       "cite": "test:quorum 2 through the Gate: one blessing waits, the second releases"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "reply-held",
+   "kind": "hold",
+   "title": "A reply held",
+   "mark": "H",
+   "subtitle": "a request to a petition, nothing sent",
+   "say": "From the host's call to a waiting caller: Blessed asks the model, the draft becomes a petition at the Gate, its first ledger line is written, and the caller waits for a release.",
+   "steps": [
+    {
+     "n": 1,
+     "title": "The host asks Blessed instead of the model",
+     "chapters": [
+      "01-hold.html"
+     ],
+     "entries": [
+      {
+       "scope": "Blessed.complete(_:)",
+       "anchor": "try await blessed(request).response",
+       "note": "The host's one change: it calls Blessed where it called the model, and gets back only the blessed reply.",
+       "cite": "WHAT"
+      },
+      {
+       "scope": "Blessed.blessed(_:)",
+       "anchor": "let draft = try await upstream.complete(request)",
+       "note": "Routes the request to its recipient and reviewers, then asks the model for its whole reply.",
+       "cite": "doc:Blessed.blessed(_:)"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "The model drafts",
+     "chapters": [
+      "07-seam.html"
+     ],
+     "entries": [
+      {
+       "scope": "OpenAICompatibleProvider.complete(_:)",
+       "anchor": "let (data, response) = try await session.data(for: try urlRequest(request, stream: false))",
+       "link": "none",
+       "note": "Posts the chat request to the preset's endpoint and reads the first choice back as a provider-neutral ChatResponse.",
+       "cite": "WHAT"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "The draft becomes a petition",
+     "chapters": [
+      "02-petition.html"
+     ],
+     "entries": [
+      {
+       "scope": "Blessed.hold(_:for:routing:announce:)",
+       "anchor": "let petition = try await gate.submit(",
+       "link": "none",
+       "note": "Wraps the model's text, the conversation and its provenance in a Draft and hands it to the Gate.",
+       "cite": "PIN"
+      },
+      {
+       "scope": "Gate.submit(_:to:reviewers:policy:)",
+       "anchor": "try policy.validate(reviewers: reviewers)",
+       "note": "Refuses a draft that is not the assistant's, a policy its reviewers cannot meet, and a recipient who would review their own reply.",
+       "cite": "test:submit refuses a draft that is not the assistant's, a bad quorum, a keyless reviewer, a self-review"
+      },
+      {
+       "scope": "Policy.trimmed(_:)",
+       "anchor": "let turns = context.filter { $0.role != .system }",
+       "note": "Keeps the latest user and assistant messages the window allows, and never the system prompt.",
+       "cite": "test:the kept context drops system messages and keeps the latest turns the window allows"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "The Gate stores it and writes the first line",
+     "chapters": [
+      "04-ledger.html"
+     ],
+     "entries": [
+      {
+       "scope": "MemoryPetitionStore.save(_:)",
+       "anchor": "petitions.withLock { $0[petition.id] = petition }",
+       "link": "none",
+       "note": "Keeps the petition under its id; a file store writes it as a private file instead.",
+       "cite": "WHAT"
+      },
+      {
+       "scope": "Ledger.append(_:petition:actor:digest:code:at:)",
+       "anchor": "try store.append(event)",
+       "link": "none",
+       "note": "Writes submitted with the draft's digest: the first line of the petition's record, and no word of its text.",
+       "cite": "test:a ledger holds ids, digests and codes; a withholding's reason never reaches it"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "The caller waits",
+     "chapters": [
+      "01-hold.html"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.release(for:)",
+       "anchor": "try await park(id, deadline: petition.policy.onLapse == .hold ? nil : petition.deadline)",
+       "link": "none",
+       "note": "Parks while the petition is pending, and returns the release once it is blessed.",
+       "cite": "PIN"
+      },
+      {
+       "scope": "Gate.wait(_:_:)",
+       "anchor": "waiters[id, default: [:]][token] = continuation",
+       "note": "Keeps the waiter's continuation on the actor; a cancelled caller is woken and removed, and the petition stays pending.",
+       "cite": "test:a cancelled waiter leaves the petition pending and writes nothing",
+       "link": "none"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "reviewer-rules",
+   "kind": "ruling",
+   "title": "A reviewer's ruling",
+   "mark": "R",
+   "subtitle": "a sealed verdict to a release",
+   "say": "From the reviewer opening a petition to the release: the ruling is sealed on the reviewer's device, the Gate checks the seal, the rules decide, and the release is stamped once.",
+   "steps": [
+    {
+     "n": 1,
+     "title": "The reviewer opens the petition",
+     "chapters": [
+      "03-reviewer.html"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.markViewed(_:by:)",
+       "anchor": "try ledger.append(.viewed, petition: id, actor: reviewer, digest: petition.digest, at: at)",
+       "note": "Writes viewed with the reviewer and the digest of the text they opened.",
+       "cite": "test:pending lists by reviewer; markViewed writes `viewed` for reviewers only"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "The ruling is sealed on the reviewer's device",
+     "chapters": [
+      "05-seal.html"
+     ],
+     "entries": [
+      {
+       "scope": "ReviewerIdentity.verdict(_:on:note:issued:)",
+       "anchor": "digest: petition.digest, note: note, issued: issued)",
+       "link": "none",
+       "note": "Makes a verdict pinned to the digest of the petition's current text, and signs it with the reviewer's key.",
+       "cite": "WHAT"
+      },
+      {
+       "scope": "Seal.sign(_:privateKey:)",
+       "anchor": "signed.signature = try key.signature(for: verdict.canonicalBytes)",
+       "note": "Ed25519 over the verdict's canonical bytes; the signature travels with the verdict.",
+       "cite": "PIN"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "The Gate checks the seal",
+     "chapters": [
+      "05-seal.html"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.decide(_:)",
+       "anchor": "guard Seal.verify(verdict, verifyingKey: key) else { throw BlessError.badSeal(reviewer.id) }",
+       "note": "Verifies the verdict against the public key the petition names, and refuses an unsealed one when the policy requires seals.",
+       "cite": "test:decide refuses an unsealed or forged verdict under a sealing policy",
+       "link": "none"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "The rules decide",
+     "chapters": [
+      "03-reviewer.html"
+     ],
+     "entries": [
+      {
+       "scope": "Petition.applying(_:at:)",
+       "anchor": "guard verdict.digest == current else { throw BlessError.staleVerdict(expected: current, saw: verdict.digest) }",
+       "note": "No stale verdicts, withhold wins, blessings bind to the text, one blessing per reviewer per text: each rule is a line here.",
+       "cite": "WHAT"
+      },
+      {
+       "scope": "Petition.blessings",
+       "anchor": "return verdicts.filter { $0.endorsed == current && seen.insert($0.reviewer).inserted }",
+       "note": "Counts only verdicts that endorse the current digest, once per reviewer; an amendment changes the digest, so the count starts again.",
+       "cite": "test:blessings bind to the text: an amendment starts the count again with the amender",
+       "link": "none"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Everyone waiting is woken",
+     "chapters": [
+      "01-hold.html"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.transition(_:)",
+       "anchor": "if petition.isTerminal { wakeAll(petition.id) }",
+       "note": "Announces the petition to observers and, once it is final, wakes every caller waiting on it.",
+       "cite": "test:two waiters get the same release, and it is logged once"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "The release",
+     "chapters": [
+      "03-reviewer.html"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.issue(_:)",
+       "anchor": "try ledger.append(.released, petition: next.id, digest: release.digest, code: release.basis.rawValue, at: at)",
+       "link": "none",
+       "note": "Stamps the release the first time it is handed out and writes released with its basis; later callers get the same release.",
+       "cite": "PIN"
+      },
+      {
+       "scope": "Release.verify(against:)",
+       "anchor": "guard reviewers.count >= petition.policy.quorum else {",
+       "link": "none",
+       "note": "Checks the release from scratch, the digest, every seal and the quorum, so a host can verify one it reads back.",
+       "cite": "test:quorum 2 through the Gate: one blessing waits, the second releases"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "deadline-lapses",
+   "kind": "ruling",
+   "title": "A deadline",
+   "mark": "T",
+   "subtitle": "the policy decides when no one answers",
+   "say": "From the deadline a policy sets to a lapse: a sweep finds what is due, the policy holds, withholds or sends its fallback, and a waiting caller wakes itself if no one sweeps.",
+   "steps": [
+    {
+     "n": 1,
+     "title": "A policy sets the deadline",
+     "chapters": [
+      "06-deadline.html"
+     ],
+     "entries": [
+      {
+       "scope": "Policy.validate(reviewers:)",
+       "anchor": "if let deadline, deadline <= .zero { throw BlessError.invalidPolicy(\"the deadline must be in the future\") }",
+       "note": "A deadline must be in the future and a fallback must carry its text; both are checked when the petition is held.",
+       "cite": "test:a policy is validated against its reviewers"
+      },
+      {
+       "scope": "Gate.submit(_:to:reviewers:policy:)",
+       "anchor": "deadline: policy.deadlineInterval.map { Canonical.stamp(at.addingTimeInterval($0)) })",
+       "note": "Fixes the petition's deadline at submission, in whole milliseconds.",
+       "cite": "test:submit trims the context, stores the petition and writes `submitted` with the draft's digest",
+       "link": "none"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "A sweep lapses what is due",
+     "chapters": [
+      "06-deadline.html"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.sweep(now:)",
+       "anchor": "for petition in try store.all() where petition.standing == .pending {",
+       "link": "none",
+       "note": "Lapses every pending petition whose deadline has passed; the host runs it on its own schedule.",
+       "cite": "test:onLapse withhold: a sweep past the deadline expires it, wakes its waiter, and release throws expired"
+      },
+      {
+       "scope": "Gate.lapseIfDue(_:at:)",
+       "anchor": "try ledger.append(.expired, petition: id, digest: lapsed.digest, code: lapsed.policy.onLapse.name, at: at)",
+       "note": "Saves the lapsed petition and writes expired, with the policy's lapse as its code.",
+       "cite": "PIN"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "The policy decides",
+     "chapters": [
+      "06-deadline.html"
+     ],
+     "entries": [
+      {
+       "scope": "Petition.lapsed(at:)",
+       "anchor": "if case .hold = policy.onLapse { return nil }",
+       "note": "Hold never lapses; withhold and a fallback end the petition as expired, and a lapse carries no verdict.",
+       "cite": "test:a lapse: hold never lapses; withhold and fallback expire it at the deadline, not before"
+      },
+      {
+       "scope": "Petition.fallback",
+       "anchor": "if case .releaseFallback(let text) = policy.onLapse, standing == .expired { return text }",
+       "link": "none",
+       "note": "The only text a lapse can release is the policy's own, never the model's draft.",
+       "cite": "test:a fallback lapse releases the policy's text with basis lapsed and no verdicts"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "A waiter wakes itself",
+     "chapters": [
+      "06-deadline.html"
+     ],
+     "entries": [
+      {
+       "scope": "Gate.park(_:deadline:)",
+       "anchor": "group.addTask { try await sleeper(.milliseconds(Int64((delay * 1000).rounded(.up)))) }",
+       "link": "none",
+       "note": "Races the wait against a sleeper until the deadline, so a caller wakes even when no one sweeps.",
+       "cite": "test:a waiter with a deadline wakes itself when it passes, with no sweeper"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ledger-chains",
+   "kind": "record",
+   "title": "The ledger's chain",
+   "mark": "L",
+   "subtitle": "each event bound to the one before",
+   "say": "From an append to a verify: the event is numbered and linked, its hash covers its canonical bytes, it is flushed to a private file, and verify walks the chain back.",
+   "steps": [
+    {
+     "n": 1,
+     "title": "An event is numbered and linked",
+     "chapters": [
+      "04-ledger.html"
+     ],
+     "entries": [
+      {
+       "scope": "Ledger.append(_:petition:actor:digest:code:at:)",
+       "anchor": "let event = LedgerEvent(seq: head.seq + 1, at: at, kind: kind, petitionID: petition, actor: actor,",
+       "note": "Numbers the event after the last and links it to the last hash, under one lock.",
+       "cite": "PIN"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Its hash covers its bytes",
+     "chapters": [
+      "04-ledger.html"
+     ],
+     "entries": [
+      {
+       "scope": "LedgerEvent.init(seq:at:kind:petitionID:actor:digest:code:previous:)",
+       "anchor": "self.hash = .of(Canonical.event(seq: seq, at: self.at, kind: kind, petitionID: petitionID, actor: actor,",
+       "note": "The hash is the SHA-256 of the canonical bytes, which end with the previous hash.",
+       "cite": "PIN"
+      },
+      {
+       "scope": "Canonical.event(seq:at:kind:petitionID:actor:digest:code:previous:)",
+       "anchor": "writer.tag(eventTag)",
+       "note": "bless/event/1: each field written one fixed way, the previous hash last.",
+       "cite": "test:a ledger's first two events hash to the golden vectors"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "It is written to disk",
+     "chapters": [
+      "04-ledger.html"
+     ],
+     "entries": [
+      {
+       "scope": "FileLedgerStore.append(_:)",
+       "anchor": "try lock.withLock { _ in try PrivateFile.append(line, to: url) }",
+       "link": "none",
+       "note": "One JSON line, appended and flushed before the call returns, in a file only its owner can read.",
+       "cite": "test:a file ledger writes 0600 JSON lines in a 0700 directory and reads them back"
+      },
+      {
+       "scope": "PrivateFile.append(_:to:)",
+       "anchor": "guard fsync(fd) == 0 else { throw failure(\"flush\", url) }",
+       "note": "Opens for append, writes every byte, and flushes to disk before it returns.",
+       "cite": "WHAT"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Verify walks it back",
+     "chapters": [
+      "04-ledger.html"
+     ],
+     "entries": [
+      {
+       "scope": "Ledger.verify(_:)",
+       "anchor": "guard event.previous == previous, event.hash == event.recomputedHash else {",
+       "link": "none",
+       "note": "Recomputes each hash and each link from the first event, and names the first that does not fit.",
+       "cite": "test:verify names the event where a byte changed, a line went missing, or two swapped"
+      },
+      {
+       "scope": "LedgerEvent.recomputedHash",
+       "anchor": "public var recomputedHash: Sha256 { .of(canonicalBytes) }",
+       "note": "What the fields hash to now; a changed field makes it differ from the stored hash.",
+       "cite": "PIN",
+       "link": "none"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "seal-signs",
+   "kind": "record",
+   "title": "The seal",
+   "mark": "S",
+   "subtitle": "a signature over the exact words",
+   "say": "From a reviewer's key to a release that proves itself: the verdict's canonical bytes, an Ed25519 signature over them, its check at the Gate, and its check again at release.",
+   "steps": [
+    {
+     "n": 1,
+     "title": "A reviewer holds a key",
+     "chapters": [
+      "05-seal.html"
+     ],
+     "entries": [
+      {
+       "scope": "ReviewerIdentity.init(id:displayName:privateKey:)",
+       "anchor": "key = try Curve25519.Signing.PrivateKey(rawRepresentation: raw)",
+       "note": "Rebuilds the reviewer from 32 raw bytes kept in the device's keychain; the Party it names carries only the public key.",
+       "cite": "PIN"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "The verdict's bytes",
+     "chapters": [
+      "05-seal.html"
+     ],
+     "entries": [
+      {
+       "scope": "Verdict.canonicalBytes",
+       "anchor": "public var canonicalBytes: Data { Canonical.verdict(self) }",
+       "link": "none",
+       "note": "Everything in the verdict but the signature.",
+       "cite": "doc:Verdict.canonicalBytes"
+      },
+      {
+       "scope": "Canonical.verdict(_:)",
+       "anchor": "writer.tag(verdictTag)",
+       "note": "bless/verdict/1: the petition, the reviewer, the ruling and its text, the digest read, the note and the time.",
+       "cite": "test:an amendment's canonical bytes carry its text and note, and match the golden vector"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Signed",
+     "chapters": [
+      "05-seal.html"
+     ],
+     "entries": [
+      {
+       "scope": "Seal.sign(_:privateKey:)",
+       "anchor": "signed.signature = try key.signature(for: verdict.canonicalBytes)",
+       "link": "none",
+       "note": "CryptoKit's Ed25519 signs the bytes; its signatures are randomized, and each one verifies.",
+       "cite": "test:a verdict signed by its reviewer verifies"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Verified",
+     "chapters": [
+      "05-seal.html"
+     ],
+     "entries": [
+      {
+       "scope": "Seal.verify(_:verifyingKey:)",
+       "anchor": "return key.isValidSignature(signature, for: verdict.canonicalBytes)",
+       "link": "none",
+       "note": "Any RFC 8032 verifier accepts the signature, and one changed byte refuses it.",
+       "cite": "test:changing the text, the digest, the note or the time breaks the seal"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Checked again at release",
+     "chapters": [
+      "03-reviewer.html"
+     ],
+     "entries": [
+      {
+       "scope": "Release.verify(against:)",
+       "anchor": "guard Seal.verify(verdict, verifyingKey: key) else { throw BlessError.badSeal(reviewer.id) }",
+       "note": "A release re-checks every verdict's seal, so a stored release proves itself.",
+       "cite": "WHAT"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "blessed-drops-in",
+   "kind": "seam",
+   "title": "Blessed drops in",
+   "mark": "A",
+   "subtitle": "any chat layer, wrapped",
+   "say": "From the one protocol Bless asks of a model to the playground: the chat-completions wire and its stream, a reply held whole, the presets, and a provider wrapped twice.",
+   "steps": [
+    {
+     "n": 1,
+     "title": "One protocol",
+     "chapters": [
+      "07-seam.html"
+     ],
+     "entries": [
+      {
+       "scope": "InferenceProvider.complete(_:)",
+       "anchor": "func complete(_ request: ChatRequest) async throws -> ChatResponse",
+       "note": "Answer a chat request, whole or as a stream: all Bless asks of a model.",
+       "cite": "WHAT"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "The wire and its stream",
+     "chapters": [
+      "07-seam.html"
+     ],
+     "entries": [
+      {
+       "scope": "OpenAICompatibleProvider.stream(_:)",
+       "anchor": "let (bytes, response) = try await session.bytes(for: try urlRequest(request, stream: true))",
+       "link": "none",
+       "note": "Posts with stream set and reads the response's bytes as they arrive.",
+       "cite": "test:stream yields deltas from an SSE body until [DONE]"
+      },
+      {
+       "scope": "SSEParser.feed(_:)",
+       "anchor": "if line.last == 0x0D { line.removeLast() }",
+       "note": "Gathers data lines until a blank line ends the event; fed bytes, because Foundation's async lines drop blank lines.",
+       "cite": "PIN"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Held whole",
+     "chapters": [
+      "01-hold.html"
+     ],
+     "entries": [
+      {
+       "scope": "Blessed.stream(_:)",
+       "anchor": "continuation.yield(ChatDelta(held: petition.id))",
+       "link": "none",
+       "note": "Reads the model's stream to its end, holds it, and sends the client one delta with only the petition's id.",
+       "cite": "test:stream sends one held delta, then the blessed text and the finish; nothing before the verdict"
+      },
+      {
+       "scope": "AsyncThrowingStream.assembled(model:)",
+       "anchor": "text += delta.content ?? \"\"",
+       "note": "Concatenates the deltas into one reply.",
+       "cite": "WHAT"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "The presets",
+     "chapters": [
+      "07-seam.html"
+     ],
+     "entries": [
+      {
+       "scope": "Preset.sewn(baseURL:sewn:)",
+       "anchor": "Preset(name: \"sewn\", baseURL: baseURL, extra: [\"sewn\": .object(sewn)], requiresKey: false)",
+       "link": "none",
+       "note": "AII's Sewn needs its own object on every chat request, and the preset carries it.",
+       "cite": "PIN"
+      },
+      {
+       "scope": "Wire.request(_:preset:stream:)",
+       "anchor": "extra: preset.extra.merging(request.extra ?? [:]) { _, own in own })",
+       "link": "none",
+       "note": "A request's own extra fields win over the preset's, key by key.",
+       "cite": "test:a request's own extra wins over the preset's, and never over a standard field"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "In the playground",
+     "chapters": [
+      "08-playground.html"
+     ],
+     "entries": [
+      {
+       "scope": "Witnessed.complete(_:)",
+       "anchor": "await onEvent(.delta(piece))",
+       "link": "none",
+       "note": "A provider around a provider: it hands each piece to the operator's pane and returns the whole reply to Blessed.",
+       "cite": "WHAT"
+      },
+      {
+       "scope": "Session.send()",
+       "anchor": "let blessed = Blessed(upstream: witnessed, gate: gate) { _ in routing }",
+       "note": "The patient's Send is the pattern: the model wrapped in Witnessed, wrapped in Blessed.",
+       "cite": "PIN",
+       "link": "none"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

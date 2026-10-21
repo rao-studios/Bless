@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What does the seal sign? · Bless</title>
+<meta name="description" content="A reviewer's seal is an Ed25519 signature over the verdict's canonical bytes: the petition, the reviewer, the ruling and its text, the digest of the words read, the note and the time. Edit one word and it no longer verifies.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 5 of 9</span><a href="code.html#trail-seal-signs-1">Walk it in the explorer</a></header>
+
+<h1 id="ch-seal">What does the seal sign?</h1>
+<p class="lede"><em>On a signature that names the exact words a reviewer read and sent.</em></p>
+
+<p>A reviewer holds a private key on their own device. Every ruling they give is signed with it, and the Gate checks the signature against the public key the petition names. A ruling the reviewer did not sign is refused when the policy requires seals, which it does by default.</p>
+<div class="code" data-excerpt="Sources/Bless/Parties/ReviewerIdentity.swift:ReviewerIdentity.verdict(_:on:note:issued:)"></div>
+
+<h2 id="bytes">The bytes, field by field</h2>
+<p>The seal signs a fixed byte layout, bless/verdict/1. It holds the petition and the reviewer, the ruling with its text, the digest of the words the reviewer read, the note and the moment it was issued. Each string is written with its length, so no two verdicts can share their bytes.</p>
+<div class="code" data-excerpt="Sources/Bless/Support/Canonical.swift:Canonical.verdict(_:)"></div>
+<p>The layout is Bless's own, not JSON: a JSON encoder's bytes have changed between versions of Foundation, and a signature must outlive them. Every timestamp is whole milliseconds, so a verdict read back from disk signs exactly as it did.</p>
+
+<figure class="fig" id="fig-seal" data-fig="seal">
+<figcaption>The fixture's sealed amendment, verified here with Web Crypto against the reviewer's public key. Change one word of the amended text and the signature no longer verifies. Sign it here makes a key in this browser and seals your edit.</figcaption>
+</figure>
+
+<h2 id="verify">Anyone can check it</h2>
+<p>The signature is Ed25519, so any standard verifier accepts it: Web Crypto above, Python's cryptography package in the integration guide, CryptoKit in the tests. A release carries its verdicts, so the clinic, an auditor or the patient's own app can check who allowed the words and that the words are the ones sent.</p>
+<div class="code" data-excerpt="Sources/Bless/Seal/Seal.swift:Seal.verify(_:verifyingKey:)"></div>
+
+<details class="engineers" id="engineers"><summary>For engineers: where each piece lives</summary><div class="inner">
+<ul class="plain">
+<li><a href="code.html#trail-seal-signs-1">The seal-signs trail</a> runs from the reviewer's identity to the release's own check.</li>
+<li>CryptoKit's Ed25519 signatures are randomized: two seals over the same verdict differ, and both verify. <code>SiteFixturesTests</code> checks the fixture's seal by verifying it.</li>
+<li>Bless keeps no revocation list: when a reviewer leaves, the host stops naming their key.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/figures/seal.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

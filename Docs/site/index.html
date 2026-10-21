@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bless at a glance · Bless</title>
+<meta name="description" content="Bless holds a language model's reply until a person blesses it: the reply becomes a petition, a reviewer blesses, amends or withholds it, and only a sealed release reaches the person who asked.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · at a glance</span><a href="code.html">The code explorer</a></header>
+
+<h1 id="ch-overview">Bless: a person between the model and the patient</h1>
+<p class="lede"><em>On holding a model's reply until someone who answers for it has read it.</em></p>
+
+<p>A patient asks a question in their clinic's app, and a language model drafts the answer. The patient's doctor is responsible for what the patient is told, so the draft cannot go out on its own. Bless holds it.</p>
+<p>The draft becomes a petition at a gate. A reviewer reads it and blesses it, amends it or withholds it, and signs the ruling with a key of their own. Only a release crosses the gate, and every step is written to a ledger that can prove it later.</p>
+
+<figure class="fig" id="fig-gate" data-fig="gate" data-step="1" data-ruling="amend">
+<figcaption>One question from the fixture the tests write: the model's draft, the doctor's amendment and the ledger lines the real Gate wrote. Step through it, and change the ruling to see a blessing or a withholding.</figcaption>
+</figure>
+
+<h2 id="pattern">One wrapper, any model</h2>
+<p>Bless is a Swift package. Its pattern is one type, <code>Blessed</code>, which wraps any model that answers chat requests. A host that called the model now calls <code>Blessed</code>, and the call returns only once a reviewer has ruled.</p>
+<p>The model can be Mistral, OpenAI, a model on the same Mac, or AII's Sewn. A system in another language can speak the same format: the records are plain JSON, and their signed bytes are written down in the integration guide.</p>
+
+<h2 id="tour">The chapters</h2>
+<ol class="tour">
+<li><a href="01-hold.html">Why hold the reply?</a> The one rule, and where the gate sits.</li>
+<li><a href="02-petition.html">What is a petition?</a> What is kept, what is derived, and the standings.</li>
+<li><a href="03-reviewer.html">What can a reviewer do?</a> Bless, amend or withhold, and the rules that keep two reviewers honest.</li>
+<li><a href="04-ledger.html">What does the ledger prove?</a> A chain of hashes, and why it holds no words.</li>
+<li><a href="05-seal.html">What does the seal sign?</a> A reviewer's signature over the exact text.</li>
+<li><a href="06-deadline.html">What happens at the deadline?</a> Hold, withhold, or a holding message.</li>
+<li><a href="07-seam.html">How does it drop into an inference layer?</a> Swift, the wire, and Sewn.</li>
+<li><a href="08-playground.html">What does the playground show?</a> A patient, a model and a reviewer in one window.</li>
+<li><a href="09-hipaa.html">What does HIPAA ask, and what does Bless answer?</a> What the design provides, and what the deployer must.</li>
+</ol>
+<p>The <a href="code.html">code explorer</a> holds every file of the repository, with seven trails that walk the code in the order it runs. The first, <a href="code.html#trail-full-flow-1">the whole flow</a>, routes into the other six. <a href="run.html">What this run built</a> records the request, the decisions, the commands and the tests. The orb at the bottom right answers questions about whatever page you are on.</p>
+
+<p class="close">Held, read, signed, then sent.</p>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/figures/gate.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>

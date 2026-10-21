@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why hold the reply? · Bless</title>
+<meta name="description" content="The one rule Bless adds to a chat pipeline: nothing reaches the recipient but a release. Where the gate sits, and how a streamed reply is held.">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/figure.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the chapter</a>
+<div class="shell">
+<nav class="side" aria-label="Chapters"></nav>
+<main class="page" id="main">
+<header class="top"><button class="menu" type="button" aria-expanded="false">☰ Contents</button><span>Bless · chapter 1 of 9</span><a href="code.html#trail-reply-held-1">Walk it in the explorer</a></header>
+
+<h1 id="ch-hold">Why hold the reply?</h1>
+<p class="lede"><em>On the one rule Bless adds, and the moment it applies.</em></p>
+
+<p>A chat pipeline has one moment where a model's words become a message someone reads. Before it, the text is a draft the system can still change. After it, the patient has read it, and the clinic answers for it.</p>
+<p>Bless puts its gate at that moment and adds one rule: nothing reaches the recipient but a release. A release exists only after a reviewer has ruled, and it carries the ruling with it.</p>
+
+<figure class="fig" id="fig-gate-hold" data-fig="gate" data-step="3" data-ruling="bless">
+<figcaption>Step 3 is the moment that matters: the draft exists, the patient sees only that it is held, and the ledger has written its first line.</figcaption>
+</figure>
+
+<h2 id="wrapper">The rule as one wrapper</h2>
+<p>The rule lives in one type. <code>Blessed</code> wraps a model and is a model itself, so a host swaps one call for another and changes nothing else. Its <code>complete</code> runs the model, holds the draft at the Gate, and waits for the release.</p>
+<div class="code" data-excerpt="Sources/Bless/Pattern/Blessed.swift:Blessed.complete(_:)"></div>
+<p>The waiting happens in <code>Gate.release(for:)</code>. It returns the release when the petition is blessed, and throws when it is withheld, lapsed or withdrawn. The host shows the patient a neutral notice then, never the reviewer's reason.</p>
+<div class="code" data-excerpt="Sources/Bless/Gate/Gate.swift:Gate.release(for:)"></div>
+
+<h2 id="streaming">A held reply does not stream</h2>
+<p>Most chat systems stream a reply token by token. A held reply cannot, because the reviewer has not read the tokens yet. Instead, <code>Blessed.stream</code> reads the model's stream to its end and holds the whole reply. It sends the client one delta that carries only the petition's id.</p>
+<p>When the release comes, the stream sends the blessed text as one piece, then the finish. A client that shows "your care team is reviewing this" needs nothing more than that first delta.</p>
+
+<h2 id="cancel">A dropped connection is not a decision</h2>
+<p>If the patient closes the app while a reply is held, the waiting call is cancelled. The petition stays pending and nothing is written: the doctor's review goes on, and the release waits for the next time the patient asks for it. Only <code>withdraw</code> ends a petition without a ruling.</p>
+
+<details class="engineers" id="engineers"><summary>For engineers: where each piece lives</summary><div class="inner">
+<ul class="plain">
+<li><a href="code.html#trail-reply-held-1">The reply-held trail</a> walks a request from <code>Blessed.blessed</code> through the model to <code>Gate.submit</code> and the wait.</li>
+<li>The waiting is wake-and-recheck: every final transition wakes each waiter, and each re-reads the store. <code>GateWaitingTests</code> holds two waiters, a cancelled waiter and a deadline that wakes itself.</li>
+<li>The Gate's methods other than <code>release(for:)</code> and <code>dispatch</code> never suspend, because the stores are synchronous. Each transition and its ledger line happen as one step on the actor.</li>
+</ul>
+</div></details>
+</main>
+</div>
+<script src="js/bless.js"></script>
+<script src="data/index.js"></script>
+<script src="data/fixtures.js"></script>
+<script src="js/hash.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/figures/gate.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/ask.js"></script>
+<script>Bless.mount();</script>
+</body>
+</html>
